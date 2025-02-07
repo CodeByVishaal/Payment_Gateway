@@ -89,3 +89,7 @@ class LoginSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError({'AuthorizationError':'Invalid User'})
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
