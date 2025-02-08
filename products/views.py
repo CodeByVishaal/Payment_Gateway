@@ -6,10 +6,6 @@ from .models import Products, Transactions
 from .serializers import ProductSerializer, ProductUpdateSerializer
 import razorpay
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseBadRequest
-from django.shortcuts import render
-
 class CreateOrderView(APIView):
 
     def post(self, request):

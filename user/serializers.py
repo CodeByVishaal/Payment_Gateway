@@ -42,6 +42,38 @@ class RegisterSerializer(serializers.ModelSerializer):
         validated_data.pop('confirm_password', None)
         return User.objects.create_user(**validated_data)
 
+class AdminRegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(min_length=5, max_length=20, write_only=True, style={'input_type':'password'})
+    confirm_password = serializers.CharField(min_length=5, write_only=True)
+    username = serializers.CharField(required=True)
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'password', 'confirm_password']
+
+    def validate(self, data):
+        username = data.get('username')
+        first_name = data.get('first_name')
+        password = data.get('password')
+        confirm_password = data.get('confirm_password')
+
+        if first_name and first_name.isupper():
+            raise  serializers.ValidationError({'first_name':"First Name should not contain uppercase letter"})
+
+        if password != confirm_password:
+            raise  serializers.ValidationError({'password':"Password does not match", 'confirm_password':"Password does not match"})
+
+        if not username.isalnum():
+            raise serializers.ValidationError({'username':"Username must only contain alphanumeric letters"})
+
+        return data
+
+    def create(self, validated_data):
+        validated_data.pop('confirm_password', None)
+        return User.objects.create_superuser(**validated_data)
+
 class LoginSerializer(serializers.Serializer):
     id = serializers.CharField(read_only = True)
     email = serializers.EmailField()
